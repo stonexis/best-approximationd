@@ -21,13 +21,13 @@
  */
 template <typename T>
 T* gen_func_arr(const T *array_x, const std::size_t length) {
-	if (array_x == nullptr) throw std::invalid_argument("array_x is null");
-	if (length <= 0) throw std::invalid_argument("Invalid length values");
+    if (array_x == nullptr) throw std::invalid_argument("array_x is null");
+    if (length <= 0) throw std::invalid_argument("Invalid length values");
 
-	T* arr_func = new T[length]{};
-	for (std::size_t i = 0; i < length; i++)
-		arr_func[i] = sin(array_x[i]*array_x[i]); //заданная функция
-	return arr_func;
+    T* arr_func = new T[length]{};
+    for (std::size_t i = 0; i < length; i++)
+        arr_func[i] = sin(array_x[i]*array_x[i]); //заданная функция
+    return arr_func;
 }
 /**
  * @brief Функция для создания двумерного массива значений.
@@ -40,13 +40,13 @@ T* gen_func_arr(const T *array_x, const std::size_t length) {
  */
 template <typename T>
 T** gen_func_2d_arr(T **array_2d_x, const std::size_t length_internal, const std::size_t length_external){
-	if (array_2d_x == nullptr) throw std::invalid_argument("array_2d_x is null");
-	if (length_external <= 0) throw std::invalid_argument("Invalid length_external values");
+    if (array_2d_x == nullptr) throw std::invalid_argument("array_2d_x is null");
+    if (length_external <= 0) throw std::invalid_argument("Invalid length_external values");
 
-	T** arr_2d_func = new T*[length_external]{}; 
-	for (std::size_t i = 0; i < length_external; i++)
-		arr_2d_func[i] = gen_func_arr(array_2d_x[i], length_internal);
-	return arr_2d_func;
+    T** arr_2d_func = new T*[length_external]{}; 
+    for (std::size_t i = 0; i < length_external; i++)
+        arr_2d_func[i] = gen_func_arr(array_2d_x[i], length_internal);
+    return arr_2d_func;
 }
 /**
  * @brief Функция для очистки памяти двумерного массива.
@@ -57,7 +57,7 @@ T** gen_func_2d_arr(T **array_2d_x, const std::size_t length_internal, const std
 template <typename T>
 void delete_2d_array(T**& array, std::size_t length_external){
     if (array == nullptr) return;
-	if (length_external == 0) return;
+    if (length_external == 0) return;
     for (std::size_t i = 0; i < length_external; i++)
         delete[] array[i];
     delete[] array;
@@ -75,14 +75,14 @@ void delete_2d_array(T**& array, std::size_t length_external){
  */
 template <typename T> 
 const T* gen_uniform_grid(const T step, const std::size_t count_nodes, const T a, const T b){
-	if (count_nodes <= 0) throw std::invalid_argument("Invalid count_nodes values");
-	if ((b - a) < Task_const::EPSILON) throw std::invalid_argument("Invalid a, b values");
+    if (count_nodes <= 0) throw std::invalid_argument("Invalid count_nodes values");
+    if ((b - a) < Task_const::EPSILON) throw std::invalid_argument("Invalid a, b values");
 
-	T *array = new T[count_nodes]{};
-	for (std::size_t i = 0; i < count_nodes-1; i++)
-		array[i] = a + step * i; //заполняем массив значениями координат сетки
+    T *array = new T[count_nodes]{};
+    for (std::size_t i = 0; i < count_nodes-1; i++)
+        array[i] = a + step * i; //заполняем массив значениями координат сетки
     array[count_nodes - 1] = b;
-	return array;
+    return array;
 }
 /**
  * @brief Функция для генерации более мелкой, равномерной сетки, внутри существующей
@@ -101,17 +101,17 @@ T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std:
     if (length_old < 2) throw std::invalid_argument("length_old must be at least 2");
     if (step < Task_const::EPSILON) throw std::invalid_argument("Step must be greater than 0");
 
-	T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала
+    T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала
     length_new = static_cast<std::size_t>(std::ceil(interval_length / step)) + 1; // Рассчитываем количество узлов с фиксированным шагом
-	T* arr_new = nullptr;
-	if (content_orig_mesh == false){
-    	arr_new = new T[length_new]{};
-		T a = arr_old[0]; //Начало отсчета
-    	for (std::size_t i = 0; i < length_new; i++)
-        	arr_new[i] = a + step * i; // Заполняем массив равномерными узлами
-	}
-	else {
-		length_new += 2; // Поправка получена опытным путем
+    T* arr_new = nullptr;
+    if (content_orig_mesh == false){
+        arr_new = new T[length_new]{};
+        T a = arr_old[0]; //Начало отсчета
+        for (std::size_t i = 0; i < length_new; i++)
+            arr_new[i] = a + step * i; // Заполняем массив равномерными узлами
+    }
+    else {
+        length_new += 2; // Поправка получена опытным путем
         arr_new = new T[length_old + length_new + 2]; // Учёт старых узлов и новых точек, +2 прибавляется, чтобы не выйти за границы массива используя lower_bound
         std::copy(arr_old, arr_old + length_old, arr_new); // Копируем старую сетку
 
@@ -131,7 +131,7 @@ T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std:
         // Гарантированно добавляем последний элемент
         arr_new[length_new - 1] = arr_old[length_old - 1];
     }
-	return arr_new;
+    return arr_new;
 }
 /**
  * @brief Функция для генерации более мелкой, равномерной сетки, внутри существующей
@@ -148,21 +148,21 @@ T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std:
  */
 template <typename T>
 T** gen_2d_uniform_between_nodes(
-							bool content_orig_mesh, 
-							T **array_nodes, 
-							std::size_t& length_new, 
-							const T step, 
-							const std::size_t length_internal, 
-							const std::size_t length_external
-							){
-	if (array_nodes == nullptr) throw std::invalid_argument("Input array cannot be null");
-	if (step < Task_const::EPSILON) throw std::invalid_argument("Incorrect step");
-	if (length_internal <= 0 || length_external <= 0) throw std::invalid_argument("Size arrays cannot be 0");
+                            bool content_orig_mesh, 
+                            T **array_nodes, 
+                            std::size_t& length_new, 
+                            const T step, 
+                            const std::size_t length_internal, 
+                            const std::size_t length_external
+                            ){
+    if (array_nodes == nullptr) throw std::invalid_argument("Input array cannot be null");
+    if (step < Task_const::EPSILON) throw std::invalid_argument("Incorrect step");
+    if (length_internal <= 0 || length_external <= 0) throw std::invalid_argument("Size arrays cannot be 0");
 
-	T** array_2d_uniform = new T*[length_external]{};
-	for(std::size_t k = 0; k < length_external; k++)
-        	array_2d_uniform[k] = gen_uniform_arr_in_local(content_orig_mesh, array_nodes[k], length_internal, length_new, step); // Заполняем внутренние массивы
-	return array_2d_uniform;
+    T** array_2d_uniform = new T*[length_external]{};
+    for(std::size_t k = 0; k < length_external; k++)
+            array_2d_uniform[k] = gen_uniform_arr_in_local(content_orig_mesh, array_nodes[k], length_internal, length_new, step); // Заполняем внутренние массивы
+    return array_2d_uniform;
 }
 /**
  * @brief Функция для разбиения глобальной сетки на локальные подсетки, с учетом перекрытия в 1 элемент
@@ -178,27 +178,27 @@ T** gen_2d_uniform_between_nodes(
  */
 template <typename T>
 T** gen_2d_arr_uniform(
-				const T *array_global, 
-				const T step, 
-				const std::size_t length_internal, 
-				const std::size_t length_external, 
-				const T a, const T b
-				){
-	if (array_global == nullptr) throw std::invalid_argument("array_global is null");
+                const T *array_global, 
+                const T step, 
+                const std::size_t length_internal, 
+                const std::size_t length_external, 
+                const T a, const T b
+                ){
+    if (array_global == nullptr) throw std::invalid_argument("array_global is null");
     if (length_external <= 0 || length_internal <= 0) throw std::invalid_argument("Invalid length_external values");
 
-	T **array_2d_uniform = new T*[length_external]{}; //Выделяем память под массив массивов
+    T **array_2d_uniform = new T*[length_external]{}; //Выделяем память под массив массивов
 
     for (std::size_t i = 0; i < length_external; i++) {
-		array_2d_uniform[i] = new T[length_internal]{}; //Выделяем память под каждый массив в массиве (Точки локального отрезка)
+        array_2d_uniform[i] = new T[length_internal]{}; //Выделяем память под каждый массив в массиве (Точки локального отрезка)
         for (std::size_t j = 0; j < length_internal; j++) {
             if (i > 0 && j == 0) //Если это первый элемент текущего блока, и это не первый блок, то берем последний элемент предыдущего блока
                 array_2d_uniform[i][j] = array_2d_uniform[i-1][length_internal-1]; // последний элемент предыдущего блока
-           	else 												// иначе берем элемент из одномерного массива
+               else 												// иначе берем элемент из одномерного массива
                 array_2d_uniform[i][j] = array_global[i * (length_internal - 1) + j];//чтобы смещение между блоками было на 1 элемент меньше, чем размер блока, чтобы обеспечить перекрытие  
-        	}
-    	}
-	return array_2d_uniform;
+            }
+        }
+    return array_2d_uniform;
 }
 /**
  * @brief Функция для создания рандомных точек внутри каждого элемента
@@ -211,28 +211,28 @@ T** gen_2d_arr_uniform(
  */
 template <typename T>
 T* gen_random_arr_in_local(const T *arr_old, const std::size_t length_old, const std::size_t count_random_points){
-	if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
+    if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
     if (count_random_points <= length_old) throw std::invalid_argument("Invalid count points values");
 
-	T* arr_new = new T[count_random_points +2]{};
-	
-	std::random_device rd; //инициализируем случайное зерно
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<T> distrib(arr_old[0], arr_old[length_old-1]);
+    T* arr_new = new T[count_random_points +2]{};
+    
+    std::random_device rd; //инициализируем случайное зерно
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<T> distrib(arr_old[0], arr_old[length_old-1]);
 
-	for (std::size_t i = 0; i < count_random_points-1; i++) {
-		T value = distrib(gen);  //Генерируем новое значение
-		auto position = std::lower_bound(arr_new, arr_new + i, value); //Вставляем значение в правильное место, чтобы сохранить массив отсортированным
-		std::rotate(position, arr_new + i, arr_new + i + 1);//циклически сдвигаем от позиции posit все оставшиеся элементы заполненного массива на 1 вправо
-		*position = value;
-	}
-	// Генерация последнего значения и вставка, чтобы избежать выхода за границу массива
+    for (std::size_t i = 0; i < count_random_points-1; i++) {
+        T value = distrib(gen);  //Генерируем новое значение
+        auto position = std::lower_bound(arr_new, arr_new + i, value); //Вставляем значение в правильное место, чтобы сохранить массив отсортированным
+        std::rotate(position, arr_new + i, arr_new + i + 1);//циклически сдвигаем от позиции posit все оставшиеся элементы заполненного массива на 1 вправо
+        *position = value;
+    }
+    // Генерация последнего значения и вставка, чтобы избежать выхода за границу массива
     T last_value = distrib(gen);
     auto position = std::lower_bound(arr_new, arr_new + count_random_points - 1, last_value);
     std::rotate(position, arr_new + count_random_points - 1, arr_new + count_random_points);
     *position = last_value; // Замещаем последний элемент
 
-	return arr_new;
+    return arr_new;
 }
 /**
  * @brief Функция для создания двумерного массива случайных точек.
@@ -247,14 +247,14 @@ T* gen_random_arr_in_local(const T *arr_old, const std::size_t length_old, const
  */
 template <typename T>
 T** gen_random_2d_arr_in_local(T **arr_old, const std::size_t length_internal, const std::size_t length_external, const std::size_t count_random_points){
-	if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
-	if (length_external <= 0) throw std::invalid_argument("incorrect length_external");
+    if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
+    if (length_external <= 0) throw std::invalid_argument("incorrect length_external");
 
-	T** arr_2d_in_local = new T*[length_external]{}; //Длина нового массива массивов остается прежней, поскольку мы уплотняем только внутренние массивы 
-	for (std::size_t i = 0; i < length_external; i++)
-		arr_2d_in_local[i] = gen_random_arr_in_local(arr_old[i], length_internal, count_random_points);
+    T** arr_2d_in_local = new T*[length_external]{}; //Длина нового массива массивов остается прежней, поскольку мы уплотняем только внутренние массивы 
+    for (std::size_t i = 0; i < length_external; i++)
+        arr_2d_in_local[i] = gen_random_arr_in_local(arr_old[i], length_internal, count_random_points);
 
-	return arr_2d_in_local;
+    return arr_2d_in_local;
 }
 /**
  * @brief Функция для вычисления и кеширования знаменателя.
@@ -266,23 +266,23 @@ T** gen_random_2d_arr_in_local(T **arr_old, const std::size_t length_internal, c
  */
 template <typename T>
 T* denominator_fun(const T *array_nodes_x, const std::size_t count_nodes_points) {
-	T* denominator = new T[count_nodes_points]{};
-	for(std::size_t i = 0; i < count_nodes_points; i++){
-		T product = 1;
-		for(std::size_t j = 0; j < count_nodes_points; j++){
-			 if (i != j){
-				// Проверка на совпадение узлов
+    T* denominator = new T[count_nodes_points]{};
+    for(std::size_t i = 0; i < count_nodes_points; i++){
+        T product = 1;
+        for(std::size_t j = 0; j < count_nodes_points; j++){
+             if (i != j){
+                // Проверка на совпадение узлов
                 if (std::abs(array_nodes_x[i] - array_nodes_x[j]) < Task_const::EPSILON) {
-					//std::cout << array_nodes_x[i] << " " << array_nodes_x[j] << "\n";
+                    //std::cout << array_nodes_x[i] << " " << array_nodes_x[j] << "\n";
                     delete[] denominator; // Очищаем выделенную память перед исключением
                     throw std::runtime_error("Duplicate nodes detected in array_nodes_x");
-				}
-            	product *= array_nodes_x[i] - array_nodes_x[j];
-			 }
-		}
-		denominator[i] = product;
-	}
-	return denominator;
+                }
+                product *= array_nodes_x[i] - array_nodes_x[j];
+             }
+        }
+        denominator[i] = product;
+    }
+    return denominator;
 }
 /**
  * @brief Функция для создания двумерного массива базисных функций для всех случайных точек на одном конечном элементе.
@@ -297,10 +297,10 @@ T* denominator_fun(const T *array_nodes_x, const std::size_t count_nodes_points)
 template <typename T>
 T** gen_lagrange_basis_arr_local(const T* array_nodes, const T* array_eval_points, const std::size_t count_nodes_points, const std::size_t count_eval_points) {
     if (array_nodes == nullptr || array_eval_points == nullptr) throw std::invalid_argument("Input arrays cannot be null");
-	if (count_nodes_points == 0 || count_eval_points == 0) throw std::invalid_argument("Size arrays cannot be 0");
+    if (count_nodes_points == 0 || count_eval_points == 0) throw std::invalid_argument("Size arrays cannot be 0");
     static T* denominator = nullptr;
     if (!denominator) // Проверяем, был ли уже вычислен знаменатель
-    	denominator = denominator_fun(array_nodes, count_nodes_points); // Вычисляем знаменатель один раз
+        denominator = denominator_fun(array_nodes, count_nodes_points); // Вычисляем знаменатель один раз
     T** lagrange_basis_array = new T*[count_eval_points]{}; // Массив для хранения значений всех базисных функций для всех случайных точек
     for (std::size_t l = 0; l < count_eval_points; l++) { 
         lagrange_basis_array[l] = new T[count_nodes_points]{}; // Выделяем память на внутренний массив размера N (Значения всех базисных функций КЭ для этой точки)
@@ -329,21 +329,21 @@ T** gen_lagrange_basis_arr_local(const T* array_nodes, const T* array_eval_point
  */
 template <typename T>
 T** gen_local_matrix(const T* array_nodes, const T* array_random, const std::size_t count_nodes_points, const std::size_t count_random_points){
-	if (count_nodes_points == 0 || count_random_points == 0) throw std::invalid_argument("size arrays cannot be null");
-	T** lagrange_basis_array = gen_lagrange_basis_arr_local(array_nodes, array_random, count_nodes_points, count_random_points);
-	T** local_matrix = new T*[count_nodes_points]{}; // Матрица всевозможных скалярных произведений базисных функций т.е. N*N
-	for (std::size_t i = 0; i < count_nodes_points; i++){ // Проходим по всем строчкам матрицы
-		local_matrix[i] = new T[count_nodes_points]{};
-		for (std::size_t j = 0; j <= i; j++){ // Проходим по всем столбцам матрицы, она симметрична, поэтому достаточно вычислить только значения под диагональю(j<=i)
-			T sum = 0.0;
-			for (std::size_t l = 0; l < count_random_points; l++) // Цикл по всем случайным точкам, для вычисления скалярного произведения
-				sum += lagrange_basis_array[l][i] * lagrange_basis_array[l][j]; // Скалярное произведение
-			local_matrix[i][j] = sum;
-			local_matrix[j][i] = sum;
-		}
-	}
-	delete_2d_array(lagrange_basis_array, count_random_points);
-	return local_matrix;
+    if (count_nodes_points == 0 || count_random_points == 0) throw std::invalid_argument("size arrays cannot be null");
+    T** lagrange_basis_array = gen_lagrange_basis_arr_local(array_nodes, array_random, count_nodes_points, count_random_points);
+    T** local_matrix = new T*[count_nodes_points]{}; // Матрица всевозможных скалярных произведений базисных функций т.е. N*N
+    for (std::size_t i = 0; i < count_nodes_points; i++){ // Проходим по всем строчкам матрицы
+        local_matrix[i] = new T[count_nodes_points]{};
+        for (std::size_t j = 0; j <= i; j++){ // Проходим по всем столбцам матрицы, она симметрична, поэтому достаточно вычислить только значения под диагональю(j<=i)
+            T sum = 0.0;
+            for (std::size_t l = 0; l < count_random_points; l++) // Цикл по всем случайным точкам, для вычисления скалярного произведения
+                sum += lagrange_basis_array[l][i] * lagrange_basis_array[l][j]; // Скалярное произведение
+            local_matrix[i][j] = sum;
+            local_matrix[j][i] = sum;
+        }
+    }
+    delete_2d_array(lagrange_basis_array, count_random_points);
+    return local_matrix;
 }
 /**
  * @brief Функция для создания глобальной матрицы, состоящей из суммы локальных матриц, в соответсвующих позициях.
@@ -359,35 +359,35 @@ T** gen_local_matrix(const T* array_nodes, const T* array_random, const std::siz
  */
 template <typename T>
 T** gen_global_matrix(
-				T** array_nodes,
- 				T** array_random, 
-				const std::size_t length_internal_nodes, 
-				const std::size_t length_external,
-				const std::size_t length_internal_random, 
-				const std::size_t dim_matrix
-				){
-	if (array_nodes == nullptr || array_random == nullptr) 
-		throw std::invalid_argument("Input arrays cannot be null");
-	if (length_internal_nodes == 0 || length_external == 0 || length_internal_random == 0 || dim_matrix == 0)
-		throw std::invalid_argument("Incorrect lengths");
+                T** array_nodes,
+                 T** array_random, 
+                const std::size_t length_internal_nodes, 
+                const std::size_t length_external,
+                const std::size_t length_internal_random, 
+                const std::size_t dim_matrix
+                ){
+    if (array_nodes == nullptr || array_random == nullptr) 
+        throw std::invalid_argument("Input arrays cannot be null");
+    if (length_internal_nodes == 0 || length_external == 0 || length_internal_random == 0 || dim_matrix == 0)
+        throw std::invalid_argument("Incorrect lengths");
 
-	T** global_matrix = new T*[dim_matrix]{};
-	for (std::size_t i = 0; i < dim_matrix; i++)
-		global_matrix[i] = new T[dim_matrix]{};
-		
-	for (std::size_t k = 0; k < length_external; k++){ // Цикл по всем конечным элементам (По всем локальным матрицам)
-		T** local_matrix = gen_local_matrix(array_nodes[k], array_random[k], length_internal_nodes, length_internal_random);
-		for(std::size_t i = 0; i < length_internal_nodes; i++){ // Цикл по строчкам локальной матрицы (Нас не интересуют значения за границами локальных подматриц, поскольку там скалярные произведения равны нулю) 
-			for(std::size_t j = 0; j < length_internal_nodes; j++){ // Цикл по столбцам локальной матрицы
-				std::size_t global_i = i + (length_internal_nodes - 1)*k; // Преобразование индексов из локальных в глобальные
-				std::size_t global_j = j + (length_internal_nodes - 1)*k;
-				global_matrix[global_i][global_j] += local_matrix[i][j]; // Сборка матрицы A_ij = sum[1...K](a_ij) = sum[1...K](sum[1...L](phi(x_l)_i * phi(x_l)_j))
-			} 
-		}
-		delete_2d_array(local_matrix, length_internal_nodes);	// Очищаем память для следующей локальной матрицы
-		local_matrix = nullptr;
-	}
-	return global_matrix;
+    T** global_matrix = new T*[dim_matrix]{};
+    for (std::size_t i = 0; i < dim_matrix; i++)
+        global_matrix[i] = new T[dim_matrix]{};
+        
+    for (std::size_t k = 0; k < length_external; k++){ // Цикл по всем конечным элементам (По всем локальным матрицам)
+        T** local_matrix = gen_local_matrix(array_nodes[k], array_random[k], length_internal_nodes, length_internal_random);
+        for(std::size_t i = 0; i < length_internal_nodes; i++){ // Цикл по строчкам локальной матрицы (Нас не интересуют значения за границами локальных подматриц, поскольку там скалярные произведения равны нулю) 
+            for(std::size_t j = 0; j < length_internal_nodes; j++){ // Цикл по столбцам локальной матрицы
+                std::size_t global_i = i + (length_internal_nodes - 1)*k; // Преобразование индексов из локальных в глобальные
+                std::size_t global_j = j + (length_internal_nodes - 1)*k;
+                global_matrix[global_i][global_j] += local_matrix[i][j]; // Сборка матрицы A_ij = sum[1...K](a_ij) = sum[1...K](sum[1...L](phi(x_l)_i * phi(x_l)_j))
+            } 
+        }
+        delete_2d_array(local_matrix, length_internal_nodes);	// Очищаем память для следующей локальной матрицы
+        local_matrix = nullptr;
+    }
+    return global_matrix;
 }
 /**
  * @brief Функция для локальной правой части, b_i = sum[1...L](f(x_l) * phi_i(x_l))
@@ -402,24 +402,24 @@ T** gen_global_matrix(
  */
 template <typename T>
 T* gen_local_vector_b(
-				const T* array_nodes, 
-				const T* array_random, 
-				const T* array_func, 
-				const std::size_t count_nodes_points, 
-				const std::size_t count_random_points
-				){
-	if (count_nodes_points == 0 || count_random_points == 0)
-		throw std::invalid_argument("Incorrect lengths");
-	T *local_vector_b = new T[count_nodes_points]{};
-	T** lagrange_basis_array = gen_lagrange_basis_arr_local(array_nodes, array_random, count_nodes_points, count_random_points);
-	for (std::size_t i = 0; i < count_nodes_points; i++){
-		T sum = 0.0;
-		for (std::size_t l = 0; l < count_random_points; l++) //Проходим по всем случайным точкам в данном КЭ
-			sum += array_func[l] * lagrange_basis_array[l][i]; // Скалярное произведение
-		local_vector_b[i] = sum;
-	}
-	delete_2d_array(lagrange_basis_array, count_random_points);
-	return local_vector_b;
+                const T* array_nodes, 
+                const T* array_random, 
+                const T* array_func, 
+                const std::size_t count_nodes_points, 
+                const std::size_t count_random_points
+                ){
+    if (count_nodes_points == 0 || count_random_points == 0)
+        throw std::invalid_argument("Incorrect lengths");
+    T *local_vector_b = new T[count_nodes_points]{};
+    T** lagrange_basis_array = gen_lagrange_basis_arr_local(array_nodes, array_random, count_nodes_points, count_random_points);
+    for (std::size_t i = 0; i < count_nodes_points; i++){
+        T sum = 0.0;
+        for (std::size_t l = 0; l < count_random_points; l++) //Проходим по всем случайным точкам в данном КЭ
+            sum += array_func[l] * lagrange_basis_array[l][i]; // Скалярное произведение
+        local_vector_b[i] = sum;
+    }
+    delete_2d_array(lagrange_basis_array, count_random_points);
+    return local_vector_b;
 }
 /**
  * @brief Функция для глобальной правой части, B_i = sum[1...K](b_i) = sum[1...K](sum[1...L](f(x_l) * phi_i(x_l)))
@@ -436,30 +436,30 @@ T* gen_local_vector_b(
  */
 template <typename T>
 T* gen_global_vector_b(
-				T** array_nodes, 
+                T** array_nodes, 
                 T** array_random, 
                 T** array_func,
                 const std::size_t length_internal_nodes,
                 const std::size_t length_external,
                 const std::size_t length_internal_random,
                 const std::size_t dim_matrix
-				) {
-	if (array_nodes == nullptr || array_random == nullptr || array_func == nullptr) 
-		throw std::invalid_argument("Input arrays cannot be null");
-	if (length_internal_nodes == 0 || length_external == 0 || length_internal_random == 0 || dim_matrix == 0)
-		throw std::invalid_argument("Incorrect lengths");
+                ) {
+    if (array_nodes == nullptr || array_random == nullptr || array_func == nullptr) 
+        throw std::invalid_argument("Input arrays cannot be null");
+    if (length_internal_nodes == 0 || length_external == 0 || length_internal_random == 0 || dim_matrix == 0)
+        throw std::invalid_argument("Incorrect lengths");
 
-	T *global_vector = new T[dim_matrix]{};
-	for(std::size_t k = 0; k < length_external; k++){
-		T* local_vector = gen_local_vector_b(array_nodes[k], array_random[k], array_func[k], length_internal_nodes, length_internal_random);
-		for(std::size_t i = 0; i < length_internal_nodes; i++){ // Цикл по строчкам локального вектора
-			std::size_t global_i = i + (length_internal_nodes - 1)*k; // Преобразование индексов из локальных в глобальные
-			global_vector[global_i] += local_vector[i];
-		}
-		delete[] local_vector; //Освобождаем место для следующего локального вектора
-		local_vector = nullptr;
-	}
-	return global_vector;
+    T *global_vector = new T[dim_matrix]{};
+    for(std::size_t k = 0; k < length_external; k++){
+        T* local_vector = gen_local_vector_b(array_nodes[k], array_random[k], array_func[k], length_internal_nodes, length_internal_random);
+        for(std::size_t i = 0; i < length_internal_nodes; i++){ // Цикл по строчкам локального вектора
+            std::size_t global_i = i + (length_internal_nodes - 1)*k; // Преобразование индексов из локальных в глобальные
+            global_vector[global_i] += local_vector[i];
+        }
+        delete[] local_vector; //Освобождаем место для следующего локального вектора
+        local_vector = nullptr;
+    }
+    return global_vector;
 }
 /**
  * @brief Функция для решения слау.
@@ -475,7 +475,7 @@ T* gen_global_vector_b(
 template <typename T>
 T** solve_system(T** matrix_A, T* vector_b, const std::size_t dim_matrix, const std::size_t length_internal, const std::size_t length_external){
     if (matrix_A == nullptr || vector_b == nullptr) throw std::invalid_argument("Input arrays cannot be null");
-	if (length_external == 0 || length_internal == 0 || dim_matrix == 0) throw std::invalid_argument("Incorrect lengths");
+    if (length_external == 0 || length_internal == 0 || dim_matrix == 0) throw std::invalid_argument("Incorrect lengths");
 
     // Создаем объект Eigen::Matrix
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> A(dim_matrix, dim_matrix);
@@ -484,7 +484,7 @@ T** solve_system(T** matrix_A, T* vector_b, const std::size_t dim_matrix, const 
         for (std::size_t j = 0; j < dim_matrix; j++)
             A(i, j) = matrix_A[i][j];
     // Создаем объект Eigen::Vector на основе массива vector_b
-	// Метод Map преобразует непрерывный блок памяти в Eigen::Vector 
+    // Метод Map преобразует непрерывный блок памяти в Eigen::Vector 
     Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1>> b(vector_b, dim_matrix); //(Копирования не происходит, работаем с исходным массивов напрямую)
     // Создаем объект решателя метода сопряженных градиентов
     Eigen::ConjugateGradient<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, Eigen::Lower | Eigen::Upper> cg; // Eigen::Lower | Eigen::Upper Указывает, что A рассматривается как матрица общего вида, без ограничения на нижнюю или верхнюю треугольную форму
@@ -493,12 +493,12 @@ T** solve_system(T** matrix_A, T* vector_b, const std::size_t dim_matrix, const 
     // Решаем систему уравнений
     Eigen::Matrix<T, Eigen::Dynamic, 1> x = cg.solve(b);
     // Копируем результат в массив coefficients
-	T** coefficients = new T*[length_external]{};
+    T** coefficients = new T*[length_external]{};
     for (std::size_t i = 0; i < length_external; i++){
-		coefficients[i] = new T[length_internal]{};
-		for(std::size_t j = 0; j < length_internal; j++)
-        	coefficients[i][j] = x[i*(length_internal - 1) + j]; // Переход от координат одномерных к двумерным
-	}
+        coefficients[i] = new T[length_internal]{};
+        for(std::size_t j = 0; j < length_internal; j++)
+            coefficients[i][j] = x[i*(length_internal - 1) + j]; // Переход от координат одномерных к двумерным
+    }
     return coefficients;
 }
 /**
@@ -514,27 +514,27 @@ T** solve_system(T** matrix_A, T* vector_b, const std::size_t dim_matrix, const 
  */
 template <typename T>
 T* best_approximation_local(
-					const T* local_coefficients, 
+                    const T* local_coefficients, 
                     const T* array_nodes, 
                     const T* eval_points, 
                     const std::size_t count_eval_points,
                     const std::size_t count_nodes_points
-					) {
-	if (local_coefficients == nullptr || array_nodes == nullptr || eval_points == nullptr) 
-		throw std::invalid_argument("Input arrays cannot be null");
-	if (count_nodes_points == 0 || count_eval_points == 0) 
-		throw std::invalid_argument("Size arrays cannot be 0");
+                    ) {
+    if (local_coefficients == nullptr || array_nodes == nullptr || eval_points == nullptr) 
+        throw std::invalid_argument("Input arrays cannot be null");
+    if (count_nodes_points == 0 || count_eval_points == 0) 
+        throw std::invalid_argument("Size arrays cannot be 0");
 
-	T* best_approximation_array = new T[count_eval_points]{};
-	T** lagrange_basis_array = gen_lagrange_basis_arr_local(array_nodes, eval_points, count_nodes_points, count_eval_points);
-	for (std::size_t i = 0; i < count_eval_points; i++){
-		T sum = 0.0;
-		for (std::size_t j = 0; j < count_nodes_points; j++)
-			sum += local_coefficients[j] * lagrange_basis_array[i][j];
-		best_approximation_array[i] = sum;
-	}
-	delete_2d_array(lagrange_basis_array, count_eval_points);
-	return best_approximation_array;
+    T* best_approximation_array = new T[count_eval_points]{};
+    T** lagrange_basis_array = gen_lagrange_basis_arr_local(array_nodes, eval_points, count_nodes_points, count_eval_points);
+    for (std::size_t i = 0; i < count_eval_points; i++){
+        T sum = 0.0;
+        for (std::size_t j = 0; j < count_nodes_points; j++)
+            sum += local_coefficients[j] * lagrange_basis_array[i][j];
+        best_approximation_array[i] = sum;
+    }
+    delete_2d_array(lagrange_basis_array, count_eval_points);
+    return best_approximation_array;
 }
 /**
  * @brief Функция для построения наилучшего приближения на глобальном отрезке
@@ -550,17 +550,17 @@ T* best_approximation_local(
  */
 template <typename T>
 T** best_approximation_global( 
-					T **coefficients, 
+                    T **coefficients, 
                     T **array_nodes, 
                     T **eval_points, 
                     const std::size_t count_eval_points,
                     const std::size_t length_internal,
                     const std::size_t length_external){
-	T** array_best_approximation_global = new T*[length_external]{};
-	for(std::size_t k = 0; k < length_external; k++)
-		array_best_approximation_global[k] = best_approximation_local(coefficients[k], array_nodes[k], eval_points[k], count_eval_points, length_internal);
+    T** array_best_approximation_global = new T*[length_external]{};
+    for(std::size_t k = 0; k < length_external; k++)
+        array_best_approximation_global[k] = best_approximation_local(coefficients[k], array_nodes[k], eval_points[k], count_eval_points, length_internal);
 
-	return array_best_approximation_global;
+    return array_best_approximation_global;
 }
 /**
  * @brief Функция для записи двумерного массива в файл в формате json. 
@@ -580,11 +580,11 @@ void write_to_file_arr_2d(std::ofstream &out, T **array, const std::string &name
         for (std::size_t j = 0; j < length_internal; ++j) {
             out << array[i][j];
             if (j != length_internal - 1) 
-				out << ", ";  // Разделяем значения в строке
+                out << ", ";  // Разделяем значения в строке
         }
         out << "]";  // Конец строки
         if (i != length_external - 1) 
-			out << ",\n";  // Разделяем строки
+            out << ",\n";  // Разделяем строки
     }
     out << "]";  // Конец массива
 }
@@ -609,7 +609,7 @@ void write_data_to_file(
             T **array_approximation, 
             const std::size_t length_internal_values, 
             const std::size_t length_internal_nodes,
-			const std::size_t length_external
+            const std::size_t length_external
             ) {
     std::ofstream out;
     out.open("data.json");
@@ -642,11 +642,11 @@ void write_data_to_file(
  */
 template <typename T>
 std::pair<std::map<std::string, T>, std::map<std::string, T>> calculate_errors(
-    																		T** points_fx,
-    																		T** points_lx,
-    																		const std::size_t length_internal,
-    																		const std::size_t length_external
-																			) {
+                                                                            T** points_fx,
+                                                                            T** points_lx,
+                                                                            const std::size_t length_internal,
+                                                                            const std::size_t length_external
+                                                                            ) {
     if (points_fx == nullptr || points_lx == nullptr) 
         throw std::invalid_argument("Input arrays cannot be null");
     if (length_internal == 0 || length_external == 0) 
@@ -694,10 +694,10 @@ std::pair<std::map<std::string, T>, std::map<std::string, T>> calculate_errors(
  */
 template <typename T>
 void print_error_table(
-					const std::pair<std::map<std::string, T>, std::map<std::string, T>> errors_random, 
-					const std::pair<std::map<std::string, T>, std::map<std::string, T>> errors_h_100
-					){
-	// Функция для вывода одной строчки таблицы
+                    const std::pair<std::map<std::string, T>, std::map<std::string, T>> errors_random, 
+                    const std::pair<std::map<std::string, T>, std::map<std::string, T>> errors_h_100
+                    ){
+    // Функция для вывода одной строчки таблицы
     // Тип функции явно указан через std::function, можно заметить на auto
     std::function<void(const std::string&, const std::map<std::string, T>)> print_row = 
         [](const std::string& label, const std::map<std::string, T> data) { // Первый аргумент лямбда функции - названии выводимой строки, второй - данные
