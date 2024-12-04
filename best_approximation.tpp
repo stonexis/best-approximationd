@@ -26,7 +26,7 @@ T* gen_func_arr(const T *array_x, const std::size_t length) {
 
     T* arr_func = new T[length]{};
     for (std::size_t i = 0; i < length; i++)
-        arr_func[i] = sin(array_x[i]*array_x[i]); //заданная функция
+        arr_func[i] = (sin(array_x[i])); //заданная функция
     return arr_func;
 }
 /**
@@ -99,8 +99,9 @@ template <typename T>
 T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std::size_t length_old, std::size_t& length_new, const T step) {
     if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
     if (length_old < 2) throw std::invalid_argument("length_old must be at least 2");
-    if (step < Task_const::EPSILON) throw std::invalid_argument("Step must be greater than 0");
-
+    if (step < Task_const::EPSILON) throw std::invalid_argument("Incorrect step");
+    //if (step > std::abs(arr_old[length_old - 1] - arr_old[0])) throw std::invalid_argument("Incorrect step"); // Опциональная проверка(Если выключена, то добавление точек при выполнении условия не происходит)
+    
     T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала
     length_new = static_cast<std::size_t>(std::ceil(interval_length / step)) + 1; // Рассчитываем количество узлов с фиксированным шагом
     T* arr_new = nullptr;
@@ -111,14 +112,12 @@ T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std:
             arr_new[i] = a + step * i; // Заполняем массив равномерными узлами
     }
     else {
-        length_new += 2; // Поправка получена опытным путем
-        arr_new = new T[length_old + length_new + 2]; // Учёт старых узлов и новых точек, +2 прибавляется, чтобы не выйти за границы массива используя lower_bound
+        arr_new = new T[length_old + length_new]{}; // Учёт старых узлов и новых точек
         std::copy(arr_old, arr_old + length_old, arr_new); // Копируем старую сетку
-
         // Добавляем новые точки равномерно, с учётом step
         T a = arr_old[0];
         std::size_t insert_index = length_old; // Индекс для вставки новых точек
-        for (std::size_t i = 1; i < length_new + 2; i++) {
+        for (std::size_t i = 1; i < length_new; i++) {
             T value = a + step * i;
             // Проверяем, чтобы не добавлять дублирующие точки
             if (value >= arr_old[length_old - 1]) break;

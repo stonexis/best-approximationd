@@ -7,12 +7,12 @@
  */
 namespace Task_const {
     /// Редактируемые параметры
-    inline constexpr long double A = -3.0; ///Концы отрезка
-    inline constexpr long double B = 3.0; ///Концы отрезка
-    inline constexpr std::size_t K = 8; ///Количество подотрезков интeрполяции
-    inline constexpr std::size_t N = 5; ///Количество узлов конечного элемента
-    inline constexpr std::size_t L = 500; ///Количество внутренних "случайных" точек
-    inline constexpr std::size_t M_viz = 300; ///Количество точек равномерной сетки для отображения графика
+    inline constexpr long double A = -5.0; ///Концы отрезка
+    inline constexpr long double B = 3.65; ///Концы отрезка
+    inline constexpr std::size_t K = 15; ///Количество подотрезков интeрполяции
+    inline constexpr std::size_t N = 2; ///Количество узлов конечного элемента (Степень полинома на 1 меньше)
+    inline constexpr std::size_t L = 3; ///Количество внутренних "случайных" точек
+    inline constexpr std::size_t M_viz = 15; ///Количество точек равномерной сетки для отображения графика
 
     /// Нередактируемые параметры 
     inline const std::size_t M = K * (N - 1) + 1; ///Общее количество узлов сетки на [a,b], K*(N-1) + 1, в каждом элементе теряем 1 узел из за перекрытия, кроме первого элемента
