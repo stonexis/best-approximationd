@@ -73,15 +73,15 @@ void delete_2d_array(T**& array, std::size_t length_external){
  * @return T* Указатель на массив равномерной сетки.
  * @note Массив имеет размер count_nodes. (По умолчанию Task_const::M)
  */
-template <typename T> 
-const T* gen_uniform_grid(const T step, const std::size_t count_nodes, const T a, const T b){
+template <typename T>
+const T* gen_uniform_grid(const T step, const std::size_t count_nodes, const T a, const T b) {
     if (count_nodes <= 0) throw std::invalid_argument("Invalid count_nodes values");
     if ((b - a) < Task_const::EPSILON) throw std::invalid_argument("Invalid a, b values");
-
-    T *array = new T[count_nodes]{};
-    for (std::size_t i = 0; i < count_nodes-1; i++)
-        array[i] = a + step * i; //заполняем массив значениями координат сетки
-    array[count_nodes - 1] = b;
+    T* array = new T[count_nodes]{}; 
+    for (std::size_t i = 0; i < count_nodes; i++) 
+        array[i] = a + step * i; // Заполняем значения, включая последний узел, равный b
+    if (array[count_nodes - 1] != b)
+        array[count_nodes - 1] = b;
     return array;
 }
 /**
@@ -90,45 +90,42 @@ const T* gen_uniform_grid(const T step, const std::size_t count_nodes, const T a
  * @param content_orig_mesh Должен ли новый массив содержать в себе исходную сетку? (True/False)
  * @param arr_old Интервал, внутри которого строится мелкая сетка
  * @param length_old Размер массива, внутри которого строится сетка 
- * @param[out] length_new Длинна нового массива (Заполняемый параметр)
+ * @param[out] length_out Длинна нового массива (Заполняемый параметр)
  * @param step Шаг новой сетки
  * @return T* Указатель на массив новой равномерной сетки.
  * @note Массив имеет размер length_new. (Массив не содержит значения исходной сетки, внутри которой строился)
  */
 template <typename T>
-T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std::size_t length_old, std::size_t& length_new, const T step) {
+T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std::size_t length_old, std::size_t& length_out, const T step) {
     if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
     if (length_old < 2) throw std::invalid_argument("length_old must be at least 2");
-    if (step < Task_const::EPSILON) throw std::invalid_argument("Incorrect step");
+    if (step < std::numeric_limits<T>::epsilon()) throw std::invalid_argument("Incorrect step");
     //if (step > std::abs(arr_old[length_old - 1] - arr_old[0])) throw std::invalid_argument("Incorrect step"); // Опциональная проверка(Если выключена, то добавление точек при выполнении условия не происходит)
     
-    T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала
-    length_new = static_cast<std::size_t>(std::ceil(interval_length / step)) + 1; // Рассчитываем количество узлов с фиксированным шагом
+    T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала 
+    std::size_t count_new_nodes = static_cast<std::size_t>(std::ceil(interval_length / step)); // Рассчитываем количество узлов с фиксированным шагом
     T* arr_new = nullptr;
     if (content_orig_mesh == false){
-        arr_new = new T[length_new]{};
+        arr_new = new T[count_new_nodes]{};
         T a = arr_old[0]; //Начало отсчета
-        for (std::size_t i = 0; i < length_new; i++)
+        for (std::size_t i = 0; i < count_new_nodes; i++)
             arr_new[i] = a + step * i; // Заполняем массив равномерными узлами
+        length_out = count_new_nodes;
     }
     else {
-        arr_new = new T[length_old + length_new]{}; // Учёт старых узлов и новых точек
+        arr_new = new T[length_old + count_new_nodes - 1]{}; // Учёт старых узлов и новых точек
         std::copy(arr_old, arr_old + length_old, arr_new); // Копируем старую сетку
         // Добавляем новые точки равномерно, с учётом step
         T a = arr_old[0];
         std::size_t insert_index = length_old; // Индекс для вставки новых точек
-        for (std::size_t i = 1; i < length_new; i++) {
+        for (std::size_t i = 1; i < count_new_nodes; i++) {
             T value = a + step * i;
-            // Проверяем, чтобы не добавлять дублирующие точки
-            if (value >= arr_old[length_old - 1]) break;
-
             auto position = std::lower_bound(arr_new, arr_new + insert_index, value); // Найти позицию для вставки
             std::rotate(position, arr_new + insert_index, arr_new + insert_index + 1); // Сдвинуть элементы
             *position = value; // Вставить новую точку
             insert_index++;
         }
-        // Гарантированно добавляем последний элемент
-        arr_new[length_new - 1] = arr_old[length_old - 1];
+        length_out = count_new_nodes + length_old - 1; // Отнимаем 1 поскольку строили новую сетку, на основе старой, в которой есть 1я точка
     }
     return arr_new;
 }
@@ -155,7 +152,7 @@ T** gen_2d_uniform_between_nodes(
                             const std::size_t length_external
                             ){
     if (array_nodes == nullptr) throw std::invalid_argument("Input array cannot be null");
-    if (step < Task_const::EPSILON) throw std::invalid_argument("Incorrect step");
+    if (step < std::numeric_limits<T>::epsilon()) throw std::invalid_argument("Incorrect step");
     if (length_internal <= 0 || length_external <= 0) throw std::invalid_argument("Size arrays cannot be 0");
 
     T** array_2d_uniform = new T*[length_external]{};
