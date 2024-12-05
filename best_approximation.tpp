@@ -213,24 +213,18 @@ T* gen_random_arr_in_local(const T *arr_old, const std::size_t length_old, const
     if (arr_old == nullptr) throw std::invalid_argument("array_old is null");
     if (count_random_points <= length_old) throw std::invalid_argument("Invalid count points values");
 
-    T* arr_new = new T[count_random_points +2]{};
+    T* arr_new = new T[count_random_points]{};
     
-    std::random_device rd; //инициализируем случайное зерно
-    std::mt19937 gen(rd());
+    //std::random_device rd; //инициализируем случайное зерно
+    std::mt19937 gen(42);
     std::uniform_real_distribution<T> distrib(arr_old[0], arr_old[length_old-1]);
-
-    for (std::size_t i = 0; i < count_random_points-1; i++) {
+    for (std::size_t i = 0; i < count_random_points; i++) {
         T value = distrib(gen);  //Генерируем новое значение
         auto position = std::lower_bound(arr_new, arr_new + i, value); //Вставляем значение в правильное место, чтобы сохранить массив отсортированным
         std::rotate(position, arr_new + i, arr_new + i + 1);//циклически сдвигаем от позиции posit все оставшиеся элементы заполненного массива на 1 вправо
         *position = value;
     }
-    // Генерация последнего значения и вставка, чтобы избежать выхода за границу массива
-    T last_value = distrib(gen);
-    auto position = std::lower_bound(arr_new, arr_new + count_random_points - 1, last_value);
-    std::rotate(position, arr_new + count_random_points - 1, arr_new + count_random_points);
-    *position = last_value; // Замещаем последний элемент
-
+   
     return arr_new;
 }
 /**
@@ -698,33 +692,33 @@ void print_error_table(
                     ){
     // Функция для вывода одной строчки таблицы
     // Тип функции явно указан через std::function, можно заметить на auto
-    std::function<void(const std::string&, const std::map<std::string, T>)> print_row = 
-        [](const std::string& label, const std::map<std::string, T> data) { // Первый аргумент лямбда функции - названии выводимой строки, второй - данные
+    std::function<void(const std::string&, const std::map<std::string, T>&)> print_row = 
+        [](const std::string& label, const std::map<std::string, T>& data) { // Первый аргумент лямбда функции - названии выводимой строки, второй - данные
             std::cout << std::left // Выравнивание текста влево
                       << std::setw(18) << label // Устанавливает фиксированную ширину вывода
                       << std::scientific << std::setprecision(6) //  Устанавливает точность
                       << std::setw(15) << data.at("L_1")
                       << std::setw(15) << data.at("L_2")
-                      << std::setw(15) << data.at("L_inf") << std::endl;
+                      << std::setw(15) << data.at("L_inf") << "\n" ;
         };
     // Заголовок таблицы
     std::cout << std::left
               << std::setw(18) << " "
               << std::setw(15) << "L_1"
               << std::setw(15) << "L_2"
-              << std::setw(15) << "L_inf" << std::endl;
+              << std::setw(15) << "L_inf" << "\n";
 
-    std::cout << std::string(61, '-') << std::endl;
+    std::cout << std::string(61, '-') << "\n";
 
     // Заголовок для Absolute error
-    std::cout << "Absolute error" << std::endl;
+    std::cout << "Absolute error" << "\n";
     print_row("Random points", errors_random.first);
     print_row("h/100 points", errors_h_100.first);
 
-    std::cout << std::string(61, '-') << std::endl;
+    std::cout << std::string(61, '-') << "\n";
 
     // Заголовок для Relative error
-    std::cout << "Relative error" << std::endl;
+    std::cout << "Relative error" << "\n";
     print_row("Random points", errors_random.second);
     print_row("h/100 points", errors_h_100.second);
 }
