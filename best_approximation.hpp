@@ -165,20 +165,6 @@ T** best_approximation_global(
                     const std::size_t length_external=Task_const::K
                     );
 template <typename T>
-T* gen_arr_sealing(
-            const T *array_old,
-            const std::size_t length_old, 
-            const std::size_t count_new_points, 
-            const T a, const T b
-            );
-template <typename T>
-T** gen_2d_arr_sealing(
-                T **array_old, 
-                const std::size_t length_old_external, 
-                const std::size_t length_old_internal, 
-                const std::size_t *count_new_points
-                );
-template <typename T>
 std::pair< std::map<std::string, T>, std::map<std::string, T> > calculate_errors(
                                                                         T** points_fx, 
                                                                         T** points_lx, 
