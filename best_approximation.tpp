@@ -25,8 +25,12 @@ T* gen_func_arr(const T *array_x, const std::size_t length) {
     if (length <= 0) throw std::invalid_argument("Invalid length values");
 
     T* arr_func = new T[length]{};
-    for (std::size_t i = 0; i < length; i++)
-        arr_func[i] = (sin(array_x[i])); //заданная функция
+    for (std::size_t i = 0; i < length; i++){
+            if (std::abs(array_x[i]) < std::numeric_limits<T>::epsilon())
+                arr_func[i] = 1;
+            else
+                arr_func[i] = sin(array_x[i]) / (array_x[i]); //заданная функция
+    }
     return arr_func;
 }
 /**
@@ -76,7 +80,7 @@ void delete_2d_array(T**& array, std::size_t length_external){
 template <typename T>
 const T* gen_uniform_grid(const T step, const std::size_t count_nodes, const T a, const T b) {
     if (count_nodes <= 0) throw std::invalid_argument("Invalid count_nodes values");
-    if ((b - a) < Task_const::EPSILON) throw std::invalid_argument("Invalid a, b values");
+    if ((b - a) < std::numeric_limits<T>::epsilon()) throw std::invalid_argument("Invalid a, b values");
     T* array = new T[count_nodes]{}; 
     for (std::size_t i = 0; i < count_nodes; i++) 
         array[i] = a + step * i; // Заполняем значения, включая последний узел, равный b
@@ -102,8 +106,9 @@ T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std:
     if (step < std::numeric_limits<T>::epsilon()) throw std::invalid_argument("Incorrect step");
     //if (step > std::abs(arr_old[length_old - 1] - arr_old[0])) throw std::invalid_argument("Incorrect step"); // Опциональная проверка(Если выключена, то добавление точек при выполнении условия не происходит)
     
-    T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала 
-    std::size_t count_new_nodes = static_cast<std::size_t>(std::ceil(interval_length / step)); // Рассчитываем количество узлов с фиксированным шагом
+    T interval_length = std::abs(arr_old[length_old - 1] - arr_old[0]); // Длина интервала
+    //Округление вверх, поскольку нужно захватить весь интервал 
+    std::size_t count_new_nodes = static_cast<std::size_t>(std::ceil(interval_length / step)) + 1; // Рассчитываем количество узлов с фиксированным шагом
     T* arr_new = nullptr;
     if (content_orig_mesh == false){
         arr_new = new T[count_new_nodes]{};
@@ -125,7 +130,7 @@ T* gen_uniform_arr_in_local(bool content_orig_mesh, const T* arr_old, const std:
             *position = value; // Вставить новую точку
             insert_index++;
         }
-        length_out = count_new_nodes + length_old - 1; // Отнимаем 1 поскольку строили новую сетку, на основе старой, в которой есть 1я точка
+        length_out = count_new_nodes + length_old - 2; // Отнимаем 2 поскольку строили новую сетку, на основе старой, в которой есть 1я точка и последняя точка
     }
     return arr_new;
 }
@@ -262,7 +267,7 @@ T* denominator_fun(const T *array_nodes_x, const std::size_t count_nodes_points)
         for(std::size_t j = 0; j < count_nodes_points; j++){
              if (i != j){
                 // Проверка на совпадение узлов
-                if (std::abs(array_nodes_x[i] - array_nodes_x[j]) < Task_const::EPSILON) {
+                if (std::abs(array_nodes_x[i] - array_nodes_x[j]) < std::numeric_limits<T>::epsilon()) {
                     //std::cout << array_nodes_x[i] << " " << array_nodes_x[j] << "\n";
                     delete[] denominator; // Очищаем выделенную память перед исключением
                     throw std::runtime_error("Duplicate nodes detected in array_nodes_x");
@@ -656,8 +661,8 @@ std::pair<std::map<std::string, T>, std::map<std::string, T>> calculate_errors(
             sum_2_abs += abs_error * abs_error;
             max_abs = std::max(max_abs, abs_error);
 
-            if (std::abs(points_fx[k][i]) > Task_const::EPSILON) {
-                T rel_error = abs_error / (std::abs(points_fx[k][i]) + Task_const::EPSILON);
+            if (std::abs(points_fx[k][i]) > std::numeric_limits<T>::epsilon() ) {
+                T rel_error = abs_error / std::abs(points_fx[k][i]);
                 sum_rel += rel_error;
                 sum_2_rel += rel_error * rel_error;
                 max_rel = std::max(max_rel, rel_error);

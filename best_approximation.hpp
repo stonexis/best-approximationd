@@ -8,18 +8,17 @@
 namespace Task_const {
     /// Редактируемые параметры
     inline constexpr long double A = -5.0; ///Концы отрезка
-    inline constexpr long double B = 3.65; ///Концы отрезка
-    inline constexpr std::size_t K = 15; ///Количество подотрезков интeрполяции
-    inline constexpr std::size_t N = 6; ///Количество узлов конечного элемента (Степень полинома на 1 меньше)
+    inline constexpr long double B = 10.362; ///Концы отрезка
+    inline constexpr std::size_t K = 3; ///Количество подотрезков интeрполяции
+    inline constexpr std::size_t N = 4; ///Количество узлов конечного элемента (Степень полинома на 1 меньше)
     inline constexpr std::size_t L = 30; ///Количество внутренних "случайных" точек
     inline constexpr std::size_t M_viz = 300; ///Количество точек равномерной сетки для отображения графика
 
     /// Нередактируемые параметры 
-    inline const std::size_t M = K * (N - 1) + 1; ///Общее количество узлов сетки на [a,b], K*(N-1) + 1, в каждом элементе теряем 1 узел из за перекрытия, кроме первого элемента
+    inline constexpr std::size_t M = K * (N - 1) + 1; ///Общее количество узлов сетки на [a,b], K*(N-1) + 1, в каждом элементе теряем 1 узел из за перекрытия, кроме первого элемента
     inline const long double H = std::abs(B-A)/(M-1); ///Шаг равномерной сетки
-    inline const long double STEP_H_100 = Task_const::H / 100; /// Шаг сетки h/100
-    inline const long double STEP_M_viz = std::abs(B-A)/(M_viz - 1); /// Шаг сетки M_viz
-    inline constexpr long double EPSILON = 1e-3; 
+    inline const long double STEP_H_100 = H / 100; /// Шаг сетки h/100
+    inline const long double STEP_M_viz = std::abs(B-A)/(M_viz - 1); /// Шаг сетки M_viz 
 }
 
 template <typename T> 
